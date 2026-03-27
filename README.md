@@ -1,4 +1,4 @@
-# Reatil_reward
+# Retail_reward
  # Rewards API - Spring Boot Application
 
 ##  Overview
