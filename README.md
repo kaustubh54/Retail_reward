@@ -1,36 +1,38 @@
-# Retail_reward
- # Rewards API - Spring Boot Application
+# 🏆 Retail Rewards API (Spring Boot)
 
-##  Overview
+## 📌 Overview
 
-This project implements a **Rewards Program API** for a retailer. Customers earn reward points based on their transaction amounts.
+This project implements a **Rewards Program API** for a retailer. Customers earn reward points based on their transactions over a **dynamic 3-month period**.
 
-###  Reward Rules
+---
+
+## 🎯 Reward Rules
 
 * 2 points for every dollar spent **above $100**
 * 1 point for every dollar spent **between $50 and $100**
 * No points for transactions **below $50**
 
-#### Example:
+### 💡 Example
 
-* Transaction of $120 → (20 × 2) + (50 × 1) = **90 points**
+* Transaction of **$120**
+  → (20 × 2) + (50 × 1) = **90 points**
 
--------------------------------------------------------------------------------------------------------------------------------------------
-##  Tech Stack
+---
 
-* Java 8
+## ⚙️ Tech Stack
+
+* Java 8+
 * Spring Boot
 * Spring Data JPA
 * H2 In-Memory Database
 * Maven
-* JUnit 5
-* Mockito
+* JUnit 5 & Mockito
 
----------------------------------------------------------------------------------------------------------------------------------------------
+---
 
-##  Project Structure
+## 📂 Project Structure
 
-
+```
 com.retail.rewards
 │
 ├── controller        # REST Controllers
@@ -41,141 +43,143 @@ com.retail.rewards
 ├── dto               # Data Transfer Objects
 ├── exception         # Custom exceptions & handlers
 ├── util              # Utility classes
+```
 
-----------------------------------------------------------------------------------------------------------------------------------------------
+---
 
-##  Features
+## 🚀 Features
 
-* Calculate **monthly reward points per customer**
-* Calculate **total reward points**
-* RESTful API design
-* Exception handling using `@ControllerAdvice`
-* Unit & Integration testing
-* Clean layered architecture (Controller → Service → Repository)
+* ✅ Calculate **monthly reward points per customer**
+* ✅ Calculate **total reward points**
+* ✅ Dynamic **last 3 months calculation** (no hardcoding)
+* ✅ SQL-based data initialization (`data.sql`)
+* ✅ RESTful API design
+* ✅ Exception handling using `@ControllerAdvice`
+* ✅ Unit & Integration testing
+* ✅ Clean layered architecture
 
---------------------------------------------------------------------------------------------------------------------------------------------------
+---
 
-##  API Endpoints
+## 🔗 API Endpoint
 
-###  Get Rewards by Customer ID
+### Get Rewards by Customer ID
 
+```
 GET /api/rewards/{customerId}
+```
 
+### Example
 
-#### Example
-GET http://localhost:8080/api/rewards/101
+```
+http://localhost:8080/api/rewards/101
+```
 
+### Sample Response
 
-#### Sample Response:
-
-json
+```json
 {
   "customerId": 101,
   "monthlyRewards": [
     {
       "month": "Jan",
       "points": 115
+    },
+    {
+      "month": "Feb",
+      "points": 150
     }
   ],
-  "totalPoints": 115
+  "totalPoints": 265
 }
+```
 
-POST http://localhost:8080/api/rewards/transactions
-###Sample Request
-{
-  "customerId": 104,
-  "amount": 150,
-  "transactionDate": "2026-03-27"
-}
+> ⚠️ Note: Data is preloaded using SQL scripts. No POST API is used.
 
---------------------------------------------------------------------------------------------------------------------------------------
-##  Database (H2)
+---
 
-### Access H2 Console:
+## 🗄️ Database (H2)
 
+### Access H2 Console
 
+```
 http://localhost:8080/h2-console
+```
 
-
-### JDBC URL:
+### JDBC URL
 
 ```
 jdbc:h2:mem:testdb
 ```
----------------------------------------------------------------------------------------------------------------------------------------
 
-##  Testing
+---
+
+## 🧪 Testing
 
 ### Unit Tests
-Service layer
-Used Mockito for unit testing.
+
+* Service layer tested using **Mockito**
 
 ### Integration Tests
 
-* Controller layer using MockMvc
+* Controller layer tested using **MockMvc**
 
-### Test Coverage Includes:
+### Coverage Includes
 
-* Positive scenarios
-* Negative scenarios (no data, invalid inputs)
-* Edge cases (amount = 50, 100, <50)
+* ✔ Positive scenarios
+* ✔ Negative scenarios (no data, invalid input)
+* ✔ Edge cases (amount = 50, 100, <50)
 
---------------------------------------------------------------------------------------------------------------------------------------------
+---
 
-##  Exception Handling
+## ⚠️ Exception Handling
 
-* Custom exception: `ResourceNotFoundException`
+* Custom Exception: `ResourceNotFoundException`
 * Global handler using `@ControllerAdvice`
 
-----------------------------------------------------------------------------------------------------------------------------------------------
+---
 
-##  Key Highlights
+## 📊 Data Initialization
 
-* No hardcoded months (dynamic calculation)
-* Java 8 Streams for data processing
-* Clean and maintainable code
-* Proper package structure
-* Production-ready coding standards
+Data is loaded using `data.sql` at application startup.
 
--------------------------------------------------------------------------------------------------------------------------------------------
+✔ Multiple customers
+✔ Multiple months
+✔ Covers edge cases
 
-## For Future Enhancements
+---
+
+## ⭐ Key Highlights
+
+* ✔ No hardcoded months (dynamic logic)
+* ✔ Java Streams for aggregation
+* ✔ Clean and maintainable code
+* ✔ Production-ready structure
+* ✔ Follows Java coding standards
+
+---
+
+## 🔮 Future Enhancements
 
 * Pagination & filtering (date range)
 * Authentication (Spring Security + JWT)
 * Caching (Redis)
 
------------------------------------------------------------------------------------------------------------------------------------------------
-Test Data
--- Customer 101 (3 months)
-INSERT INTO transactions (customer_id, amount, transaction_date) VALUES (101, 120, '2026-01-10');
-INSERT INTO transactions (customer_id, amount, transaction_date) VALUES (101, 75,  '2026-01-15');
-INSERT INTO transactions (customer_id, amount, transaction_date) VALUES (101, 40,  '2026-01-20');
+---
 
-INSERT INTO transactions (customer_id, amount, transaction_date) VALUES (101, 200, '2026-02-05');
-INSERT INTO transactions (customer_id, amount, transaction_date) VALUES (101, 95,  '2026-02-12');
-INSERT INTO transactions (customer_id, amount, transaction_date) VALUES (101, 60,  '2026-02-25');
+## ▶️ How to Run
 
-INSERT INTO transactions (customer_id, amount, transaction_date) VALUES (101, 110, '2026-03-03');
-INSERT INTO transactions (customer_id, amount, transaction_date) VALUES (101, 45,  '2026-03-10');
+1. Clone the repository
+2. Run the Spring Boot application
+3. Access API:
 
--- Customer 102
-INSERT INTO transactions (customer_id, amount, transaction_date) VALUES (102, 130, '2026-01-08');
-INSERT INTO transactions (customer_id, amount, transaction_date) VALUES (102, 85,  '2026-01-18');
+   ```
+   http://localhost:8080/api/rewards/{customerId}
+   ```
 
-INSERT INTO transactions (customer_id, amount, transaction_date) VALUES (102, 220, '2026-02-02');
-INSERT INTO transactions (customer_id, amount, transaction_date) VALUES (102, 55,  '2026-02-14');
+---
 
-INSERT INTO transactions (customer_id, amount, transaction_date) VALUES (102, 75,  '2026-03-01');
-INSERT INTO transactions (customer_id, amount, transaction_date) VALUES (102, 150, '2026-03-20');
+## 🙌 Author
 
--- Customer 103
-INSERT INTO transactions (customer_id, amount, transaction_date) VALUES (103, 49,  '2026-01-05');
-INSERT INTO transactions (customer_id, amount, transaction_date) VALUES (103, 51,  '2026-01-25');
+**Kaustubh Nagvekar**
 
-INSERT INTO transactions (customer_id, amount, transaction_date) VALUES (103, 101, '2026-02-11');
-INSERT INTO transactions (customer_id, amount, transaction_date) VALUES (103, 180, '2026-02-21');
-
-
-
-
+---
