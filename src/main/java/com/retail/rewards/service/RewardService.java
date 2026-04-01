@@ -6,5 +6,5 @@ import com.retail.rewards.entity.Transaction;
 
 public interface RewardService {
 	RewardResponseDTO getRewardsByCustomer(Long customerId);
-	Transaction addTransaction(Transaction transaction);
+	
 }

@@ -36,20 +36,7 @@ public class RewardController {
 	    return ResponseEntity.ok(rewardService.getRewardsByCustomer(customerId));
 	}
 	
-	
-	/**
-	 * Creates a new transaction for a customer.
-	 *
-	 * <p>This API accepts transaction details in JSON format,
-	 * saves the transaction in the database, and returns the saved entity.</p>
-	 */
-	@Operation(summary = "Post transaction of customers")
-	@PostMapping("/transactions")
-	public ResponseEntity<Transaction> addTransaction(@RequestBody Transaction transaction) {
+//	Added SQL script to load the data
 
-	    Transaction saved = rewardService.addTransaction(transaction);
-
-	    return ResponseEntity.status(201).body(saved);
-	}
 }
 

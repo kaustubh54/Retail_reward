@@ -11,6 +11,7 @@ import java.util.List;
 import com.retail.rewards.dto.MonthlyRewardDTO;
 import com.retail.rewards.dto.RewardResponseDTO;
 import com.retail.rewards.entity.Transaction;
+import com.retail.rewards.exception.ResourceNotFoundException;
 import com.retail.rewards.repository.TransactionRepository;
 import com.retail.rewards.service.impl.RewardServiceImpl;
 
@@ -50,20 +51,19 @@ class RewardServiceImplTest {
     }
 
     /**
-     *  Positive test case
+     * ✅ Positive test case
      */
     @Test
     void testGetRewardsByCustomer_Success() {
 
         List<Transaction> transactions = Arrays.asList(t1, t2);
 
-        // Mock behavior
-        when(repository.findByCustomerId(101L)).thenReturn(transactions);
+        when(repository.findByCustomerIdAndTransactionDateBetween(
+                eq(101L), any(), any()))
+                .thenReturn(transactions);
 
-        // Call service
         RewardResponseDTO response = rewardService.getRewardsByCustomer(101L);
 
-        // Assertions
         assertNotNull(response);
         assertEquals(101L, response.getCustomerId());
         assertEquals(120, response.getTotalPoints());
@@ -73,30 +73,33 @@ class RewardServiceImplTest {
         assertEquals("Jan", monthly.get(0).getMonth());
         assertEquals(120, monthly.get(0).getPoints());
 
-        // Verify interaction
-        verify(repository, times(1)).findByCustomerId(101L);
+        verify(repository, times(1))
+                .findByCustomerIdAndTransactionDateBetween(eq(101L), any(), any());
     }
 
     /**
-     *  Negative test case
+     * ✅ Negative test case
      */
     @Test
     void testGetRewardsByCustomer_NoTransactions() {
 
-        when(repository.findByCustomerId(101L))
+        when(repository.findByCustomerIdAndTransactionDateBetween(
+                eq(101L), any(), any()))
                 .thenReturn(Collections.emptyList());
 
-        RuntimeException exception = assertThrows(RuntimeException.class, () ->
-                rewardService.getRewardsByCustomer(101L)
+        ResourceNotFoundException exception = assertThrows(
+                ResourceNotFoundException.class,
+                () -> rewardService.getRewardsByCustomer(101L)
         );
 
-        assertEquals("No transactions found for customer: 101", exception.getMessage());
+        assertTrue(exception.getMessage().contains("No transactions"));
 
-        verify(repository, times(1)).findByCustomerId(101L);
+        verify(repository, times(1))
+                .findByCustomerIdAndTransactionDateBetween(eq(101L), any(), any());
     }
 
     /**
-     *  Multiple months scenario
+     * ✅ Multiple months scenario
      */
     @Test
     void testGetRewardsByCustomer_MultipleMonths() {
@@ -108,60 +111,36 @@ class RewardServiceImplTest {
 
         List<Transaction> transactions = Arrays.asList(t1, feb);
 
-        when(repository.findByCustomerId(101L)).thenReturn(transactions);
+        when(repository.findByCustomerIdAndTransactionDateBetween(
+                eq(101L), any(), any()))
+                .thenReturn(transactions);
 
         RewardResponseDTO response = rewardService.getRewardsByCustomer(101L);
 
         assertEquals(2, response.getMonthlyRewards().size());
         assertTrue(response.getTotalPoints() > 0);
 
-        verify(repository).findByCustomerId(101L);
-    }
-    @Test
-    void testAddTransaction_Success() {
-
-        Transaction input = new Transaction();
-        input.setCustomerId(101L);
-        input.setAmount(150.0);
-        input.setTransactionDate(LocalDate.now());
-
-        Transaction saved = new Transaction();
-        saved.setId(1L);
-        saved.setCustomerId(101L);
-        saved.setAmount(150.0);
-        saved.setTransactionDate(LocalDate.now());
-
-        when(repository.save(input)).thenReturn(saved);
-
-        Transaction result = rewardService.addTransaction(input);
-
-        assertNotNull(result);
-        assertEquals(1L, result.getId());
-        assertEquals(101L, result.getCustomerId());
-
-        verify(repository, times(1)).save(input);
+        verify(repository)
+                .findByCustomerIdAndTransactionDateBetween(eq(101L), any(), any());
     }
 
     /**
-     *  Negative Test Case (Exception)
+     * ✅ Edge case: No reward points (<50)
      */
     @Test
-    void testAddTransaction_Exception() {
+    void testGetRewardsByCustomer_NoRewardPoints() {
 
-        Transaction input = new Transaction();
-        input.setCustomerId(101L);
-        input.setAmount(150.0);
-        input.setTransactionDate(LocalDate.now());
+        Transaction low = new Transaction();
+        low.setCustomerId(101L);
+        low.setAmount(40.0); // 0 points
+        low.setTransactionDate(LocalDate.of(2026, 1, 10));
 
-        when(repository.save(input))
-                .thenThrow(new RuntimeException("DB error"));
+        when(repository.findByCustomerIdAndTransactionDateBetween(
+                eq(101L), any(), any()))
+                .thenReturn(List.of(low));
 
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
-            rewardService.addTransaction(input);
-        });
+        RewardResponseDTO response = rewardService.getRewardsByCustomer(101L);
 
-        assertEquals("DB error", exception.getMessage());
-
-        verify(repository).save(input);
+        assertEquals(0, response.getTotalPoints());
     }
 }

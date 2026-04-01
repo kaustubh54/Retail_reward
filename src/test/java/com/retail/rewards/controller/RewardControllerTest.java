@@ -89,52 +89,52 @@ class RewardControllerTest {
     }
 
 
-    /**
-     *  Positive Test Case
-     */
-    @Test
-    void testAddTransaction_Success() throws Exception {
-
-        Transaction request = new Transaction();
-        request.setCustomerId(101L);
-        request.setAmount(150.0);
-        request.setTransactionDate(LocalDate.of(2026, 3, 27));
-
-        Transaction saved = new Transaction();
-        saved.setId(1L);
-        saved.setCustomerId(101L);
-        saved.setAmount(150.0);
-        saved.setTransactionDate(LocalDate.of(2026, 3, 27));
-
-        when(rewardService.addTransaction(request)).thenReturn(saved);
-
-        mockMvc.perform(post("/api/rewards/transactions")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.id").value(1))
-                .andExpect(jsonPath("$.customerId").value(101))
-                .andExpect(jsonPath("$.amount").value(150.0));
-    }
-
-    /**
-     *  Negative Test Case (Exception)
-     */
-    @Test
-    void testAddTransaction_Exception() throws Exception {
-
-        Transaction request = new Transaction();
-        request.setCustomerId(101L);
-        request.setAmount(150.0);
-        request.setTransactionDate(LocalDate.of(2026, 3, 27));
-
-        when(rewardService.addTransaction(request))
-                .thenThrow(new RuntimeException("Error saving transaction"));
-
-        mockMvc.perform(post("/api/rewards/transactions")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isInternalServerError());
-    }
+//    /**
+//     *  Positive Test Case
+//     */
+//    @Test
+//    void testAddTransaction_Success() throws Exception {
+//
+//        Transaction request = new Transaction();
+//        request.setCustomerId(101L);
+//        request.setAmount(150.0);
+//        request.setTransactionDate(LocalDate.of(2026, 3, 27));
+//
+//        Transaction saved = new Transaction();
+//        saved.setId(1L);
+//        saved.setCustomerId(101L);
+//        saved.setAmount(150.0);
+//        saved.setTransactionDate(LocalDate.of(2026, 3, 27));
+//
+//        when(rewardService.addTransaction(request)).thenReturn(saved);
+//
+//        mockMvc.perform(post("/api/rewards/transactions")
+//                .contentType(MediaType.APPLICATION_JSON)
+//                .content(objectMapper.writeValueAsString(request)))
+//                .andExpect(status().isCreated())
+//                .andExpect(jsonPath("$.id").value(1))
+//                .andExpect(jsonPath("$.customerId").value(101))
+//                .andExpect(jsonPath("$.amount").value(150.0));
+//    }
+//
+//    /**
+//     *  Negative Test Case (Exception)
+//     */
+//    @Test
+//    void testAddTransaction_Exception() throws Exception {
+//
+//        Transaction request = new Transaction();
+//        request.setCustomerId(101L);
+//        request.setAmount(150.0);
+//        request.setTransactionDate(LocalDate.of(2026, 3, 27));
+//
+//        when(rewardService.addTransaction(request))
+//                .thenThrow(new RuntimeException("Error saving transaction"));
+//
+//        mockMvc.perform(post("/api/rewards/transactions")
+//                .contentType(MediaType.APPLICATION_JSON)
+//                .content(objectMapper.writeValueAsString(request)))
+//                .andExpect(status().isInternalServerError());
+//    }
 }
     

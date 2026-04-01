@@ -39,7 +39,9 @@ public class RewardServiceImpl implements RewardService {
     @Override
     public RewardResponseDTO getRewardsByCustomer(Long customerId) {
 
-        List<Transaction> transactions = repository.findByCustomerId(customerId);
+    	LocalDate now = LocalDate.now();
+        LocalDate threeMonthsAgo = now.minusMonths(3);
+        List<Transaction> transactions = repository.findByCustomerIdAndTransactionDateBetween(customerId,threeMonthsAgo, now);
 
         if (transactions.isEmpty()) {
             throw new ResourceNotFoundException("No transactions found for customer: " + customerId);
@@ -73,10 +75,11 @@ public class RewardServiceImpl implements RewardService {
                 .getMonth()
                 .getDisplayName(TextStyle.SHORT, Locale.ENGLISH);
     }
-    @Override
-    public Transaction addTransaction(Transaction transaction) {
-
-        return repository.save(transaction);
-    }
+//    Added sql script to load the data 
+//    @Override
+//    public Transaction addTransaction(Transaction transaction) {
+//
+//        return repository.save(transaction);
+//    }
     
 }
